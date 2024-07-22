@@ -1,47 +1,50 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
 int main() {
 
-    int server_fd, new_socket;
-    struct sockaddr_in server_address, client_address;
-    int addrlen = sizeof(client_address);
-    char buffer[BUFFER_SIZE] = {0};
-    char *http_response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello from server!";
-
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
-
-    server_address.sin_family = AF_INET;
-    server_address.sin_addr.s_addr = INADDR_ANY;
-    server_address.sin_port = htons(PORT);
-
-    bind(server_fd, (struct sockaddr *)&server_address, sizeof(server_address));
-
-    listen(server_fd, 5);
-
-
-    new_socket = accept(server_fd, (struct sockaddr *)&client_address, (socklen_t*)&addrlen);
-
-
+    struct sockaddr_in client;
+    struct sockaddr_in server;
+    int server_socket;
+    int foop = sizeof(struct sockaddr_in);
     
-    read(new_socket, buffer, BUFFER_SIZE);
+    char* MSG = 
+    "HTTP/1.1 200 OK\r\n"
+    "Content-Length: 0\r\n"
+    "\r\n";
 
 
+    memset(&server, 0, sizeof(struct sockaddr_in));
+
+    server.sin_family = AF_INET;
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
+    server.sin_port = htons(PORT);
+
+    server_socket = socket(AF_INET,SOCK_STREAM,0);
+    bind(server_socket, (struct sockaddr*)&server, sizeof(struct sockaddr));
+
+    listen(server_socket,1);
+    int foo = accept(server_socket,(struct sockaddr*)&client, (socklen_t*)&foo);
     
-    send(new_socket, http_response, strlen(http_response), 0);
-   
 
-   
-    close(new_socket);
-    close(server_fd);
+    while(foo)
+    {
+        send(foo, MSG, strlen(MSG),0);
+        printf("Sending shit to client\n");
+        close(foo);
+        foo = accept(server_socket,(struct sockaddr*)&client, (socklen_t*)&foo);
+    }
+    
 
     return 0;
 }
