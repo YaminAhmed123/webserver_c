@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include "serverfiles/function.c"
+#include "serverfiles/simplereader.c"
 
 
 #define PORT 8080
@@ -40,9 +41,18 @@ int main() {
     if(bind_stat < 0){ printf("ERR binding\n"); }
 
     int listen_stat = listen(server_socket,1);
-    if(listen_stat<0){printf("ERR listen");}
+    if(listen_stat<0){printf("ERR listen\n");}
     int foo;
-    
+
+
+    //playground
+    char* path = "ONLINE/index.html";
+    READER reader;
+    reader.FILEPATH = path;
+
+    memset((void*)&reader.FILE_BUFFER,0,1024);
+    readFile(reader.FILEPATH, reader.FILE_BUFFER,1024);
+    printf("%s\n",reader.FILE_BUFFER);
 
     while(1)
     {
