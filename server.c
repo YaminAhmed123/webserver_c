@@ -13,7 +13,32 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
+
 int main() {
+
+    //prepare static buffers for frontend
+
+    {
+        char* FILEPATH_CSS = "ONLINE/index.css";
+        char* FILEPATH_HTML = "ONLINE/index.html";
+        char* FILEPATH_JS = "ONLINE/index.js";
+
+
+        memset(HTML_BUFFER,0,sizeof(HTML_BUFFER));
+        memset(CSS_BUFFER,0,sizeof(CSS_BUFFER));
+        memset(JS_BUFFER,0,sizeof(JS_BUFFER));
+
+
+        readFile(FILEPATH_HTML, HTML_BUFFER, sizeof(HTML_BUFFER));
+        readFile(FILEPATH_CSS, CSS_BUFFER, sizeof(CSS_BUFFER));
+        readFile(FILEPATH_JS, JS_BUFFER, sizeof(JS_BUFFER));
+    }
+
+    
+    printf("%s\n",HTML_BUFFER);
+    printf("%s\n",CSS_BUFFER);
+    printf("%s\n",JS_BUFFER);
+
 
     struct sockaddr_in client;
     struct sockaddr_in server;
@@ -45,7 +70,7 @@ int main() {
     int foo;
 
 
-    //playground
+    /*
     char* path = "ONLINE/index.html";
     READER reader;
     reader.FILEPATH = path;
@@ -53,6 +78,8 @@ int main() {
     memset((void*)&reader.FILE_BUFFER,0,1024);
     readFile(reader.FILEPATH, reader.FILE_BUFFER,1024);
     printf("%s\n",reader.FILE_BUFFER);
+    */
+
 
     while(1)
     {
