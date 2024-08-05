@@ -34,7 +34,7 @@ int main() {
         readFile(FILEPATH_JS, JS_BUFFER, sizeof(JS_BUFFER));
     }
 
-    
+    // display Buffers
     printf("%s\n",HTML_BUFFER);
     printf("%s\n",CSS_BUFFER);
     printf("%s\n",JS_BUFFER);
