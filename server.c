@@ -70,16 +70,6 @@ int main() {
     int foo;
 
 
-    /*
-    char* path = "ONLINE/index.html";
-    READER reader;
-    reader.FILEPATH = path;
-
-    memset((void*)&reader.FILE_BUFFER,0,1024);
-    readFile(reader.FILEPATH, reader.FILE_BUFFER,1024);
-    printf("%s\n",reader.FILE_BUFFER);
-    */
-
 
     while(1)
     {
