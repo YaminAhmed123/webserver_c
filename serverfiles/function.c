@@ -1,44 +1,35 @@
 // static buffers for frontend
+#include <endian.h>
 #include <string.h>
+#include <stdio.h>
 
 char HTML_BUFFER[1024];
 char CSS_BUFFER[1024];
 char JS_BUFFER[1024];
 
+char HEADER_HTML[256];
+char HEADER_CSS[256];
+char HEADER_JS[256];
 
-char HTTP_RESPONSE[2048];
 
-
-void genHTML_HEADER()
+void genHEADER_HTML()
 {
+    memset(HEADER_HTML,0,sizeof(HEADER_HTML));
 
+    sprintf(HEADER_HTML, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/html\r\n\r\n",(int)strlen(HTML_BUFFER));
 }
 
-void genCSS_HEADER()
+void genHEADER_CSS()
 {
+    memset(HEADER_CSS,0,sizeof(HEADER_CSS));
 
+    sprintf(HEADER_CSS, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/css\r\n\r\n", (int)strlen(CSS_BUFFER));
 }
 
-void genJS_HEADER()
+void genHEADER_JS()
 {
+    memset(HEADER_JS,0,sizeof(HEADER_JS));
 
+    sprintf(HEADER_JS, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/js\r\n\r\n", (int)strlen(JS_BUFFER));
 }
 
-
-void CONNECT_HTTP_RESPONSE_BUFFER(char* BUFFER, char type)
-{
-    memset(HTTP_RESPONSE,0,sizeof(HTTP_RESPONSE));
-    HTTP_RESPONSE[2047] = '\0';
-    
-    switch(type)
-    {
-        case 'h': genHTML_HEADER();
-        break;
-
-        case 'c': genCSS_HEADER();
-        break;
-
-        case 'j': genJS_HEADER();
-        break;
-    }
-}

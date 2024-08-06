@@ -69,6 +69,9 @@ int main() {
     if(listen_stat<0){printf("ERR listen\n");}
     int foo;
 
+    genHEADER_HTML();
+    genHEADER_CSS();
+    genHEADER_JS();
 
 
     while(1)
@@ -79,12 +82,20 @@ int main() {
         if(STATUS < 0) { printf("WARNING: buffer data might be corrupted\n"); }
         buffer[STATUS] = '\0';
 
-
+        /*
         printf("%s\n",buffer);
         send(foo, MSG, strlen(MSG),0);
         printf("HTTP RESPONSE WAS SEND\n");
+        */
+
+        send(foo,HEADER_HTML, strlen(HEADER_HTML),0);
+
+        send(foo, HTML_BUFFER,strlen(HTML_BUFFER),0);
+
         close(foo);
         memset(buffer,0,sizeof(buffer));
+
+        
     }
     
     close(foo);
