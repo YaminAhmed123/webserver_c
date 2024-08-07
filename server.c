@@ -38,6 +38,7 @@ int main() {
     printf("%s\n",HTML_BUFFER);
     printf("%s\n",CSS_BUFFER);
     printf("%s\n",JS_BUFFER);
+    printf("-----------------Backend LOGs-----------------");
 
 
     struct sockaddr_in client;
@@ -73,7 +74,6 @@ int main() {
     genHEADER_CSS();
     genHEADER_JS();
 
-
     while(1)
     {
         foo = accept(server_socket,(struct sockaddr*)&client, (socklen_t*)&foop);
@@ -82,15 +82,16 @@ int main() {
         if(STATUS < 0) { printf("WARNING: buffer data might be corrupted\n"); }
         buffer[STATUS] = '\0';
 
-        /*
-        printf("%s\n",buffer);
-        send(foo, MSG, strlen(MSG),0);
-        printf("HTTP RESPONSE WAS SEND\n");
-        */
+        
+        printf("%s",buffer);
 
-        send(foo,HEADER_HTML, strlen(HEADER_HTML),0);
+        if( CHECK_REQUEST(buffer)== 'H' ) { SEND_HTML(foo); }
+        if( CHECK_REQUEST(buffer)== 'C' ) { SEND_CSS(foo); }
+        if( CHECK_REQUEST(buffer)== 'J' ) { SEND_JS(foo); }
 
-        send(foo, HTML_BUFFER,strlen(HTML_BUFFER),0);
+        printf("HTTP RESPONSE WAS SEND\n\n");
+
+
 
         close(foo);
         memset(buffer,0,sizeof(buffer));

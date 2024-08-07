@@ -2,6 +2,7 @@
 #include <endian.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/socket.h>
 
 char HTML_BUFFER[1024];
 char CSS_BUFFER[1024];
@@ -30,6 +31,61 @@ void genHEADER_JS()
 {
     memset(HEADER_JS,0,sizeof(HEADER_JS));
 
-    sprintf(HEADER_JS, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/js\r\n\r\n", (int)strlen(JS_BUFFER));
+    sprintf(HEADER_JS, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\nContent-Type: text/javascript\r\n\r\n", (int)strlen(JS_BUFFER));
+}
+
+
+
+
+
+
+void SEND_HTML(int fd)
+{
+    send(fd, HEADER_HTML, strlen(HEADER_HTML),0);
+    send(fd, HTML_BUFFER, strlen(HTML_BUFFER),0);
+}
+
+void SEND_CSS(int fd)
+{
+    send(fd, HEADER_CSS, strlen(HEADER_CSS),0);
+    send(fd,CSS_BUFFER,strlen(CSS_BUFFER),0);
+}
+
+void SEND_JS(int fd)
+{
+    send(fd,HEADER_JS,strlen(HEADER_JS),0);
+    send(fd,JS_BUFFER,strlen(JS_BUFFER),0);
+}
+
+
+
+
+char CHECK_REQUEST(char* BUFFER)
+{
+    char tempBuffer[32];
+    int lastIndex;
+
+    char* HTML = "GET / HTTP/1.1";
+    char* CSS = "GET /index.css HTTP/1.1";
+    char* JS = "GET /index.js HTTP/1.1";
+
+    for(int i = 0; i<100;++i)
+    {
+        if(BUFFER[i] == '\r')
+        {
+            lastIndex = i;
+            break;
+        } else {
+        tempBuffer[i] = BUFFER[i];
+        }
+    }
+
+    tempBuffer[lastIndex] = '\0';
+
+    if(strcmp(tempBuffer,HTML)==0){ return 'H'; }
+    if(strcmp(tempBuffer,CSS)==0){ return 'C'; }
+    if(strcmp(tempBuffer,JS)==0){ return 'J'; }
+
+    return -1;
 }
 
