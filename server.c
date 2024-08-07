@@ -49,10 +49,7 @@ int main() {
     char buffer[BUFFER_SIZE];
     memset(buffer,0,sizeof(buffer));
     
-    char* MSG = 
-    "HTTP/1.1 200 OK\r\n"
-    "Content-Length: 0\r\n"
-    "\r\n";
+    
 
 
     memset(&server, 0, sizeof(struct sockaddr_in));
