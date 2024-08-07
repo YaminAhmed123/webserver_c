@@ -38,7 +38,7 @@ int main() {
     printf("%s\n",HTML_BUFFER);
     printf("%s\n",CSS_BUFFER);
     printf("%s\n",JS_BUFFER);
-    printf("-----------------Backend LOGs-----------------");
+    printf("-----------------Backend LOGs-----------------\n\n");
 
 
     struct sockaddr_in client;
