@@ -60,9 +60,15 @@ void SEND_JS(int fd)
 
 
 
+void POST_EVENT()
+{
+
+}
+
+
 char CHECK_REQUEST(char* BUFFER)
 {
-    char tempBuffer[32];
+    char tempBuffer[256];
     int lastIndex;
 
     char* HTML = "GET / HTTP/1.1";
