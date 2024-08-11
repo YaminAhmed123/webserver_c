@@ -60,7 +60,7 @@ void SEND_JS(int fd)
 
 
 
-void POST_EVENT()
+void POST_LISTEN()
 {
 
 }
@@ -91,6 +91,15 @@ char CHECK_REQUEST(char* BUFFER)
     if(strcmp(tempBuffer,HTML)==0){ return 'H'; }
     if(strcmp(tempBuffer,CSS)==0){ return 'C'; }
     if(strcmp(tempBuffer,JS)==0){ return 'J'; }
+
+    //check if it is POST request
+    char postCheck[5];
+    for(int i = 0; i<4; i++)
+    {
+        postCheck[i] = tempBuffer[i];
+    }
+    postCheck[4] = '\0';
+    if(strcmp(postCheck,"POST")==0) {return 'P';}
 
     return -1;
 }

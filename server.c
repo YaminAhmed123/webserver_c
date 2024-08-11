@@ -11,7 +11,7 @@
 
 
 #define PORT 8080
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 4096
 
 
 int main() {
@@ -49,7 +49,8 @@ int main() {
     char buffer[BUFFER_SIZE];
     memset(buffer,0,sizeof(buffer));
     
-    
+    char* http_response = "HTTP/1.1 200 OK\r\n\r\n";
+
 
 
     memset(&server, 0, sizeof(struct sockaddr_in));
@@ -85,15 +86,17 @@ int main() {
         if( CHECK_REQUEST(buffer)== 'H' ) { SEND_HTML(foo); }
         if( CHECK_REQUEST(buffer)== 'C' ) { SEND_CSS(foo); }
         if( CHECK_REQUEST(buffer)== 'J' ) { SEND_JS(foo); }
+        if( CHECK_REQUEST(buffer)== 'P' ) 
+        {
+            send(foo,http_response,strlen(http_response),0);
+        }
 
         printf("HTTP RESPONSE WAS SEND\n\n");
-
 
 
         close(foo);
         memset(buffer,0,sizeof(buffer));
 
-        
     }
     
     close(foo);

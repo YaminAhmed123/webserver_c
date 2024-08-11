@@ -1,13 +1,17 @@
-function getIP(){
+function getURL(){
     return window.location.href;
 }
 
-HOST = getIP();
+HOST = getURL();
 
 
 function H1_PRESSED(){
-    alert("OMGEREE HE PWESSED DE BUTTON");
+    alert("TEST BSP AUF DEM CLIENT");
 }
 
 console.log(HOST);
 
+//set new action for form tag
+const from = document.getElementById("UPLOAD");
+from.action = HOST;
+console.log("action URL set to: "+HOST);
