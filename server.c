@@ -81,13 +81,35 @@ int main() {
         buffer[STATUS] = '\0';
 
         
-        printf("%s",buffer);
+        // printf("%s",buffer);
 
         if( CHECK_REQUEST(buffer)== 'H' ) { SEND_HTML(foo); }
         if( CHECK_REQUEST(buffer)== 'C' ) { SEND_CSS(foo); }
         if( CHECK_REQUEST(buffer)== 'J' ) { SEND_JS(foo); }
         if( CHECK_REQUEST(buffer)== 'P' ) 
         {
+            // problem NUMBER 1: load boundary string
+            int bon = 0;
+            char boundaryString[1024];
+            char* boundary = "boundary=";
+            int indexOfBoundary = findSubString(buffer,boundary);
+
+            for(int i = indexOfBoundary+9; i < 100000; i++)
+            {
+                if(buffer[i] == '\r'){
+                    boundaryString[bon] = '\0';
+                    printf("%s\n",boundaryString);
+                    break;
+                }
+                boundaryString[bon] = buffer[i];
+                ++bon;
+            }
+
+            // problem NUMBER 2: does ending boundary string exist ?
+            int ExistOrNot = DoesEndBoundaryStringExist(buffer,boundaryString);
+            
+
+            //after all is load into memory
             send(foo,http_response,strlen(http_response),0);
         }
 

@@ -10,6 +10,15 @@ void readFile(char* FILEPATH, char* BUFFER, int BUFFER_SIZE)
 }
 
 
+// write file in binary mode
+void writeFile(char* DATA)
+{
+    
+}
+
+
+
+
 struct reader{
     char* FILEPATH;
     char FILE_BUFFER[1024]; //take in note that this is a static size this might blow up when loading large files
