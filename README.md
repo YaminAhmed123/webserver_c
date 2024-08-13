@@ -10,3 +10,5 @@ Also u can use termux and compile with clang on android now ur phone is a http s
 
 u can upload stuff to server and download it.
 not now but in future for sure
+
+note this http server was created for single traffic
