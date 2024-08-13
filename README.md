@@ -1,10 +1,11 @@
-#############
-THE server EXECUTABLE SHOULD BE USED WITH A CLI 
-#############
+Goofy Ahh 
+Webserver in C. 
 
-Also it has no security at all use only in safe networks such as the
-local network where only you have acces
+it has no security use at own risk
+Also sometimes there are some seg faults 
+however I did not debug with gdb yet.
 
-I am not an expert nor a professional in C if anything blows up u can not contact me.
+Why would u wanne use it ? IDK u Tell me
+Also u can use termux and compile with clang on android now ur phone is a http server.
 
-
+u can upload stuff to server and download it.
