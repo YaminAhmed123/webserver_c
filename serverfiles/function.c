@@ -64,33 +64,29 @@ void SEND_JS(int fd)
 
 
 
-// functions to use for multipart data handler
 
-int findSubString(char* BUFFER,char* SubString)
+
+void incrementBySize(int* var,int bySize)
 {
-    char* ptr = strstr(BUFFER,SubString);
-    if(ptr!=NULL)
-    {
-        return ptr-BUFFER;
-    }
-    return -1;
+    *var+= bySize;
 }
 
 
-// that function does return either -1 if the EndBoundaryString is not in Buffer or it will return the index at where the boundary string starts at
-int DoesEndBoundaryStringExist(char* buffer, char* boundaryString)
-{
-    char END_STRING[512];
-    for(int i = 0; i<strlen(boundaryString)+1;i++){
-        END_STRING[i] = boundaryString[i];
-    }
 
-    END_STRING[strlen(boundaryString)] = '-';
-    END_STRING[strlen(boundaryString)+1] = '-';
-    END_STRING[strlen(boundaryString)+2] = '\0';
 
-    return findSubString(buffer, END_STRING);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
