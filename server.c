@@ -11,10 +11,13 @@
 
 
 #define PORT 8080
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 20000
 
 
 int main() {
+    // prepare large data Buffer
+    char* LARGE_DATA_BUFFER = (char*)malloc(512 * 1024 * 1024);
+    int LARGE_DATA_BUFFER_SIZE = 512*1024*1024;
 
     //prepare static buffers for frontend
 
@@ -88,27 +91,7 @@ int main() {
         if( CHECK_REQUEST(buffer)== 'J' ) { SEND_JS(foo); }
         if( CHECK_REQUEST(buffer)== 'P' ) 
         {
-            // problem NUMBER 1: load boundary string
-            int bon = 0;
-            char boundaryString[1024];
-            char* boundary = "boundary=";
-            int indexOfBoundary = findSubString(buffer,boundary);
-
-            for(int i = indexOfBoundary+9; i < 100000; i++)
-            {
-                if(buffer[i] == '\r'){
-                    boundaryString[bon] = '\0';
-                    printf("%s\n",boundaryString);
-                    break;
-                }
-                boundaryString[bon] = buffer[i];
-                ++bon;
-            }
-
-            // problem NUMBER 2: does ending boundary string exist ?
-            int ExistOrNot = DoesEndBoundaryStringExist(buffer,boundaryString);
-            
-
+            printf("%s\n",buffer);
             //after all is load into memory
             send(foo,http_response,strlen(http_response),0);
         }
@@ -122,5 +105,6 @@ int main() {
     }
     
     close(foo);
+    free(LARGE_DATA_BUFFER);
     return 0;
 }
