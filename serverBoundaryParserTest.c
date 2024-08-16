@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include "serverfiles/function.c"
 #include "serverfiles/simplereader.c"
+#include "serverfiles/multipartDataHandler.c"
 
 
 #define PORT 8080
@@ -92,9 +93,20 @@ int main() {
         if( CHECK_REQUEST(buffer)== 'P' ) 
         {
             // cannot do that as it includes bin data as well printf("%s\n",buffer);
+            int sizeSeq;
+
+            // Caution ptr needs to be freed to avoid memory leak !
+            char* ptr = findBoundaryString(buffer,BUFFER_SIZE,&sizeSeq); 
             
+            for(int i = 0; i<sizeSeq; i++){
+                printf("%c",ptr[i]);
+            }
+
+            free(ptr);
+
             //after all is load into memory
             send(foo,http_response,strlen(http_response),0);
+            printf(" \n");
         }
 
         printf("HTTP RESPONSE WAS SEND\n\n");

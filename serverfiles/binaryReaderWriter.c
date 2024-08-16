@@ -1,5 +1,6 @@
 // this file defines a set of functions to search for a sequence of data in binary files
-
+#include <stdio.h> 
+#include <sys/types.h>
 
 
 
@@ -25,5 +26,13 @@ int findSequenceInBinaryData(char* BINARY_DATA,int dataSize, char* sequence,int 
         }
     }
     return -1;
+}
+
+
+void writeBinaryToDisk(char* fileName, char* DATA, uint DATA_SIZE)
+{
+    FILE* file = fopen(fileName, "wb");
+
+    fwrite(DATA,sizeof(char), DATA_SIZE, file);
 }
 
