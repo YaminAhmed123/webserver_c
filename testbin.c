@@ -15,7 +15,7 @@ int main()
         sequences[i] = i;
     }
 
-    int res = findSequenceInBinaryData(buffer,20,sequences,10);
+    int res = findSequenceInBinaryData(buffer,20,sequences,10,0);
 
     printf("%d\n",buffer[5+2]);
     printf("%d\n",buffer[2+res]);
@@ -37,7 +37,7 @@ int main()
     buffer2[7] = 'q';
     buffer2[8] = '\0';
 
-    int res2 = findSequenceInBinaryData(buffer2, 10, seq, 4);
+    int res2 = findSequenceInBinaryData(buffer2, 10, seq, 4,0);
 
 
     // test passed not that memset 0 = \0 as char

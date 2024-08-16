@@ -76,14 +76,17 @@ int main() {
     genHEADER_CSS();
     genHEADER_JS();
 
+
+
     while(1)
     {
         foo = accept(server_socket,(struct sockaddr*)&client, (socklen_t*)&foop);
-        int STATUS = read(foo,buffer, BUFFER_SIZE-1);
+        int STATUS = read(foo,buffer, BUFFER_SIZE);
 
+        /*
         if(STATUS < 0) { printf("WARNING: buffer data might be corrupted\n"); }
         buffer[STATUS] = '\0';
-
+        */
         
         // printf("%s",buffer);
 
@@ -93,16 +96,11 @@ int main() {
         if( CHECK_REQUEST(buffer)== 'P' ) 
         {
             // cannot do that as it includes bin data as well printf("%s\n",buffer);
-            int sizeSeq;
 
-            // Caution ptr needs to be freed to avoid memory leak !
-            char* ptr = findBoundaryString(buffer,BUFFER_SIZE,&sizeSeq); 
-            
-            for(int i = 0; i<sizeSeq; i++){
-                printf("%c",ptr[i]);
-            }
-
-            free(ptr);
+            /*
+            int sum;
+            void* checkVAL = doStuff(buffer,BUFFER_SIZE,LARGE_DATA_BUFFER,&sum,&foo);
+            */
 
             //after all is load into memory
             send(foo,http_response,strlen(http_response),0);
