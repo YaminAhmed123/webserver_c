@@ -57,6 +57,8 @@ char* findBoundaryString(char* BINARY_DATA, uint DATA_SIZE, int* sizeForSequence
 
 
 
+// Bug found the boundary string is not the end boundary string resulting in an immediate exit
+
 // CAUTION THIS METHOD CANNOT BE USED IT HAS AT SOME POINT A BUG THAT HAS NOT BEEN IDENTIFIED YET
 // A future implement will come where it will simply read to Content-Length
 void* doStuff(char* dBuffer, uint dBufferSize, char* BIN_BUFF,int* HowMuchStuffWritten,int* fd)
