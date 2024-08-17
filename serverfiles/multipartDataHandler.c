@@ -50,6 +50,198 @@ char* findBoundaryString(char* BINARY_DATA, uint DATA_SIZE, int* sizeForSequence
     return boundaryString;
 }
 
+int getIndexWhereBoundaryStringIs(char* DATA,uint DATA_SIZE)
+{
+    int size;
+    char* ptr = findBoundaryString(DATA,DATA_SIZE,&size); // pls free later
+
+    int index = findSequenceInBinaryData(DATA, DATA_SIZE, ptr, size, 0);
+    index+=size;
+
+    int rl_index = findSequenceInBinaryData(DATA, DATA_SIZE, ptr, size, index);
+
+    free(ptr);
+    return rl_index;
+}
+
+
+// Basically same as BoundaryString but val is changed to Content-Length:
+char* findContentLength(char* BINARY_DATA, uint DATA_SIZE, int* sizeForSequence)
+{
+    char* b = "Content-Length: ";
+    char boundary[strlen(b)];
+
+    for(int i = 0; i< strlen(b); i++)
+    {
+        boundary[i] = b[i];
+    }
+
+
+    
+    // search binary for the sequence
+    int index = findSequenceInBinaryData(BINARY_DATA, DATA_SIZE,boundary, strlen(b),0);
+
+    if(index == -1){return NULL;}
+
+    index+=16;
+
+    char tempBuffer[1000];
+    memset(tempBuffer,0, sizeof(tempBuffer));
+    int i = 0;
+    while(BINARY_DATA[index] != '\r'){
+        tempBuffer[i] = BINARY_DATA[index];
+        ++index;
+        ++i;
+    }
+
+
+    char* boundaryString = malloc(sizeof(char)*strlen(tempBuffer));
+
+    for(int i = 0; i<strlen(tempBuffer);i++){
+        boundaryString[i] = tempBuffer[i];
+    }
+    *sizeForSequence = strlen(tempBuffer);
+    return boundaryString;
+}
+
+
+
+
+char* findFileName(char* BINARY_DATA, uint DATA_SIZE, int* sizeForSequence)
+{
+
+    // Set like this casue compiler does not support it that way
+    char b[11];
+    b[0] = 'f';
+    b[1] = 'i';
+    b[2] = 'l';
+    b[3] = 'e';
+    b[4] = 'n';
+    b[5] = 'a'; 
+    b[6] = 'm';
+    b[7] = 'e';
+    b[8] = '=';
+    b[9] = '"';
+    b[10] = '\0';
+
+
+    char boundary[strlen(b)];
+
+    for(int i = 0; i< strlen(b); i++)
+    {
+        boundary[i] = b[i];
+    }
+
+
+    
+    // search binary for the sequence
+    int index = findSequenceInBinaryData(BINARY_DATA, DATA_SIZE,boundary, strlen(b),0);
+
+    if(index == -1){return NULL;}
+
+    index+=10;
+
+    char tempBuffer[1000];
+    memset(tempBuffer,0, sizeof(tempBuffer));
+    int i = 0;
+    while(BINARY_DATA[index] != '"'){
+        tempBuffer[i] = BINARY_DATA[index];
+        ++index;
+        ++i;
+    }
+
+
+    char* boundaryString = malloc(sizeof(char)*strlen(tempBuffer));
+
+    for(int i = 0; i<strlen(tempBuffer);i++){
+        boundaryString[i] = tempBuffer[i];
+    }
+
+
+    *sizeForSequence = strlen(tempBuffer);
+    return boundaryString;
+}
+
+
+int searchForEndBoundaryString(char* buffer, int buffer_size)
+{
+    int size;
+    char* ptr_bd_string = findBoundaryString(buffer, buffer_size,&size);
+
+    char* ptrSend = malloc(size+2);
+    ptrSend[size] = '-';
+    ptrSend[size+1] = '-';
+    free(ptr_bd_string);
+    
+
+    int res = findSequenceInBinaryData(buffer,buffer_size, ptrSend,size+2, 0);
+
+    if(res==-1){ return -1; }
+    if(res!=-1){return res;}
+    return -1;
+}
+
+
+int getContentLengthAsNumber(char* data, int data_size)
+{
+    int sum;
+    char* n = findContentLength(data, data_size, &sum);
+
+    char num[sum+1];
+    for(int i = 0; i<sum; i++){
+        num[i] = n[i];
+    }
+    num[sum] = '\0';
+
+    free(n);
+
+    return atoi(num);
+}
+
+
+
+void postHandling(char* BUFFER, int BUFFER_SIZE)
+{
+    // Get MethaData first
+    int ContentLength = getContentLengthAsNumber(BUFFER, BUFFER_SIZE);
+
+    int fileNameSize;
+    char* fileName = findFileName(BUFFER, BUFFER_SIZE, &fileNameSize);
+
+    int BD_STRING_INDEX = getIndexWhereBoundaryStringIs(BUFFER, BUFFER_SIZE);
+
+
+    
+    // Check if best case scenario happened 
+    int happy = searchForEndBoundaryString(BUFFER, BUFFER_SIZE);
+    if(happy!=-1){
+        // be happy :) and write the relevant buffer data to disk :)))))
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -61,6 +253,9 @@ char* findBoundaryString(char* BINARY_DATA, uint DATA_SIZE, int* sizeForSequence
 
 // CAUTION THIS METHOD CANNOT BE USED IT HAS AT SOME POINT A BUG THAT HAS NOT BEEN IDENTIFIED YET
 // A future implement will come where it will simply read to Content-Length
+
+
+/*
 void* doStuff(char* dBuffer, uint dBufferSize, char* BIN_BUFF,int* HowMuchStuffWritten,int* fd)
 {
     // fetch Boundary String out of buffer
@@ -122,3 +317,4 @@ void* doStuff(char* dBuffer, uint dBufferSize, char* BIN_BUFF,int* HowMuchStuffW
     }
 }
 
+*/
