@@ -102,6 +102,42 @@ int main() {
             void* checkVAL = doStuff(buffer,BUFFER_SIZE,LARGE_DATA_BUFFER,&sum,&foo);
             */
 
+      
+      
+            // Test new impkement Content-Length function
+
+            /*
+            int xax;
+            char* ptr = findContentLength(buffer, BUFFER_SIZE, &xax);
+
+            for(int i = 0; i<xax; i++){
+                printf("%c",ptr[i]);
+            }
+            printf("\n");
+
+            free(ptr);
+            */
+
+            // find file name
+
+            /*
+            int sum;
+            char* ptx = findFileName(buffer,BUFFER_SIZE, &sum);
+            for(int i = 0; i< sum; i++){
+                printf("%c",ptx[i]);
+            }
+            printf("\n");
+            free(ptx);
+            */
+
+
+            // tets content length as number
+            /*
+            int number = getContentLengthAsNumber(buffer,BUFFER_SIZE);
+            printf("%d\n",number);
+            */
+
+
             //after all is load into memory
             send(foo,http_response,strlen(http_response),0);
             printf(" \n");
