@@ -194,6 +194,7 @@ int searchForEndBoundaryString(char* buffer, int buffer_size)
 }
 
 
+// WARNING: INPUT MUST BE SEQUENCE OF CHARS AND NOT A C STRING !!!
 int getContentLengthAsNumber(char* data, int data_size)
 {
     int sum;
