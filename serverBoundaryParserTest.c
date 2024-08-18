@@ -138,6 +138,10 @@ int main() {
             */
 
 
+            // IK brother its hard but pls try post handling here
+            postHandling(buffer,BUFFER_SIZE);
+
+
             //after all is load into memory
             send(foo,http_response,strlen(http_response),0);
             printf(" \n");

@@ -30,7 +30,7 @@ int findSequenceInBinaryData(char* BINARY_DATA,int dataSize, char* sequence,int 
 
 
 
-// Use that function to write into memory
+// WARNING: THIS FUNCTIONS TURNS OUT TO BE WAY TO SIMPLE FOR THE USECASE PLEASE MAKE NEW FUNCTION WITH OFFSETTING          Use that function to write into memory
 void writeBinaryToDisk(char* fileName, char* DATA, uint DATA_SIZE)
 {
     FILE* file = fopen(fileName, "wb");
