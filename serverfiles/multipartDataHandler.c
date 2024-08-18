@@ -219,6 +219,12 @@ char* trsCSTRING_TO_SEQ(char* cString,uint size)
     for(int i = 0; i<size-1;i++){
         ptr[i] = cString[i];
     }
+
+    for(int i = 0; i<size-1; i++)
+    {
+        printf("%c",ptr[i]);
+    }
+    printf("\n");
     return ptr;
 }
 
@@ -234,17 +240,31 @@ int calcOffsetIndex(char* data, int dSize)
     seq[2] = '\r';
     seq[3] = '\n';
     
-    char* str = "Content-Type:";
-    char* seq_str = trsCSTRING_TO_SEQ(str, 14);  // pls free it later
+    char* str = "Content-Disposition:";
+    char* seq_str = trsCSTRING_TO_SEQ(str, 21);  // pls free it later
 
     int index = findSequenceInBinaryData(data, dSize, seq_str, 13, 0);
-    index = findSequenceInBinaryData(data, dSize, seq_str, 13, index);
+    printf("%dContent dispo TYPE AT INDEX: \n",index);
+    printf("%c\n",data[index]);
+
+
+    index = findSequenceInBinaryData(data, dSize, seq, 4, index);
+    printf("KAKAKAKAKAKA\n");
+    printf("%c\n",data[index]);
 
     index+=4;
 
+    for(int i = 0;i<20; i++){
+        printf("%c",seq_str[i]);
+    }
+    printf("so i guess it worked ?\n");
 
+    free(seq_str);
     return index;
 }
+
+
+
 
 
 
@@ -288,12 +308,111 @@ char* transformToC_StringPath(char* fileName, int fSize, int* s)
 
 
 
+// Prepare Buffer and BufferSize for writng data to it
+void* prepareBuffer(char* BUFF, uint BUFF_S, int* whereBIN_STARTS_AT, int* n_size)
+{
+    int end = searchForEndBoundaryString(BUFF, BUFF_S);
+    end-=2;
+    printf("kakakakakakakakakkaakakakakakak\n");
+    printf("%d\n",end);
+    printf("%c\n",BUFF[end]);
+
+    int new_buffer_size = 0;
+
+    for(int i = *whereBIN_STARTS_AT; i<end; i++){
+        ++new_buffer_size;
+    }
+
+    char* WRITE = malloc(new_buffer_size);
+
+
+    int ii = 0;
+    for(int i = *whereBIN_STARTS_AT; i<end; i++){
+        WRITE[ii] = BUFF[i];
+        ++ii;
+    }
+
+
+    /*
+    // IMPLEMENT TEST
+    printf("-----------------------------WARNING_TEST---------------------------------\n");
+    for(int i = 0; i<new_buffer_size; i++){
+        printf("%c",WRITE[i]);
+    }
+    printf("\n");
+    printf("-----------------------------WARNING_TEST_END---------------------------------\n");
+
+    // END OF PLAY
+    */
+
+
+    *n_size = new_buffer_size;
+    return WRITE;
+}
 
 
 
 
+
+
+void h(char* buffer, int buffer_size, int bytesRead)
+{
+    int index = calcOffsetIndex(buffer,buffer_size);
+    char* spaced = &buffer[index];
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// FUCK THIS SHIT THE FUCK U CANT WRITE SHIT TO DISK BUT U CAN WRITE IT TO DISK WITH OVERFLOW WHO THE FUCK GONNE DEBUG THAT ???
 // WARNING: THIS FUNCTION IS STILL EXPERIMENTAL AND WILL NEED TO BE FIXED OVER THE NEXT SEVERA MONTH OR SO
-void postHandling(char* BUFFER, int BUFFER_SIZE)
+void postHandling(char* BUFFER, int BUFFER_SIZE, int* bytesRead)
 {
     // Get MethaData first
     int ContentLength = getContentLengthAsNumber(BUFFER, BUFFER_SIZE);
@@ -317,16 +436,35 @@ void postHandling(char* BUFFER, int BUFFER_SIZE)
 
         
         char* shiftedBuffer = &BUFFER[offset];
+
+
+        int n_buff_size;
+        char* n_buff = (char*)prepareBuffer(BUFFER, BUFFER_SIZE, &offset, &n_buff_size);
+
+        // TEST1
+        printf("--------------------------------PP\n");
+        for(int i = 0; i<n_buff_size; i++){
+            printf("%c",n_buff[i]);
+        }
+        printf("\n");
+        printf("---------------------------------------PPE\n");
+        // TEST1 END
+
         int elementNumber = offset+1;
-        int calcSize = BUFFER_SIZE-elementNumber;
+
+        // WARNING: CALC DATA RL SIZE ISSUE FIX NEEDE ASAP
+        int calcSize = *bytesRead-elementNumber;
 
         // trnsformation of fileName
         int s;
         char* filePath = transformToC_StringPath(fileName,fileNameSize,&s); // pls free later
 
-
+        printf("%cAFTER SHIFT",shiftedBuffer[0]);
         //let us try to write
-        writeBinaryToDisk(filePath,shiftedBuffer,BUFFER_SIZE); // lets see if it blow up lol
+        writeBinaryToDisk(filePath,shiftedBuffer,(uint)15);    // lets see if it blow up lol YES IT DOES LOL ._.
+
+
+        free(n_buff);
         free(fileName);
         free(filePath);
     }
@@ -334,6 +472,8 @@ void postHandling(char* BUFFER, int BUFFER_SIZE)
     printf("Nope\n");
     
 }
+
+
 
 
 

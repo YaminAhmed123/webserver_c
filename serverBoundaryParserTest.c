@@ -139,7 +139,7 @@ int main() {
 
 
             // IK brother its hard but pls try post handling here
-            postHandling(buffer,BUFFER_SIZE);
+            postHandling(buffer,BUFFER_SIZE,&STATUS);
 
 
             //after all is load into memory
