@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 // This scetion will provide a set of tools thta can be used to handle multipart data handling
 
@@ -169,6 +170,11 @@ int searchForEndBoundaryString(char* buffer, int buffer_size)
     char* ptr_bd_string = findBoundaryString(buffer, buffer_size,&size);
 
     char* ptrSend = malloc(size+2);
+
+    for(int i = 0; i<size;i++){
+        ptrSend[i] = ptr_bd_string[i];
+    }
+
     ptrSend[size] = '-';
     ptrSend[size+1] = '-';
     free(ptr_bd_string);
@@ -176,6 +182,12 @@ int searchForEndBoundaryString(char* buffer, int buffer_size)
 
     int res = findSequenceInBinaryData(buffer,buffer_size, ptrSend,size+2, 0);
 
+    for(int i = 0; i<size+2; i++){
+        printf("%c",ptrSend[i]);
+    }
+    printf("\n");
+
+    free(ptrSend);
     if(res==-1){ return -1; }
     if(res!=-1){return res;}
     return -1;
@@ -200,6 +212,61 @@ int getContentLengthAsNumber(char* data, int data_size)
 
 
 
+// WARNING: NEEDS TO BE CHECKED                              returns the index at which the actual content starts at
+int calcOffsetIndex(char* data, int dSize)
+{
+    char seq[4];
+    seq[0] = '\r';
+    seq[1] = '\n';
+    seq[2] = '\r';
+    seq[3] = '\n';
+    int index = findSequenceInBinaryData(data, dSize,seq, 4,600);
+    return index;
+}
+
+
+
+
+char* transformToC_StringPath(char* fileName, int fSize, int* s)
+{
+    char spam[12];
+    spam[0] = 'O';
+    spam[1] = 'N';
+    spam[2] = 'L';
+    spam[3] = 'I';
+    spam[4] = 'N';
+    spam[5] = 'E';
+    spam[6] = '/';
+    spam[7] = 'f';
+    spam[8] = 'i';
+    spam[9] = 'l';
+    spam[10] = 'e';
+    spam[11] = 's';
+
+    char* ptr = malloc(12+fSize+2);
+
+    for(int i = 0; i < 12; i++){
+        ptr[i] = spam[i];
+    }
+    ptr[12] = '/';
+
+    int xo = 13;
+    for(int i = 0; i<fSize; i++){
+        ptr[xo] = fileName[i];
+        ++xo;
+    }
+
+    ptr[12+fSize+1] = '\0';
+    printf("%s\n",ptr);
+    return ptr;
+}
+
+
+
+
+
+
+// WARNING: THIS FUNCTION IS STILL EXPERIMENTAL AND WILL NEED TO BE FIXED OVER THE NEXT SEVERA MONTH OR SO
 void postHandling(char* BUFFER, int BUFFER_SIZE)
 {
     // Get MethaData first
@@ -209,18 +276,36 @@ void postHandling(char* BUFFER, int BUFFER_SIZE)
     char* fileName = findFileName(BUFFER, BUFFER_SIZE, &fileNameSize);
 
     int BD_STRING_INDEX = getIndexWhereBoundaryStringIs(BUFFER, BUFFER_SIZE);
-
+    printf("%c\n",BUFFER[BD_STRING_INDEX]);
 
     
     // Check if best case scenario happened 
     int happy = searchForEndBoundaryString(BUFFER, BUFFER_SIZE);
     if(happy!=-1){
+        printf("Happy has been entered\n");
+
         // be happy :) and write the relevant buffer data to disk :)))))
+        int offset = calcOffsetIndex(BUFFER,BUFFER_SIZE);
+
+        printf("Boom after Offset\n");
+
+        offset+=4; // is index where bin data starts at
+        char* shiftedBuffer = &BUFFER[offset];
+        int elementNumber = offset+1;
+
+        // trnsformation of fileName
+        int s;
+        char* filePath = transformToC_StringPath(fileName,fileNameSize,&s); // pls free later
 
 
+        //let us try to write
+        writeBinaryToDisk(filePath,shiftedBuffer,elementNumber); // lets see if it blow up lol
+        free(fileName);
+        free(filePath);
     }
 
-
+    printf("Nope\n");
+    
 }
 
 
