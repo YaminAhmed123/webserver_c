@@ -212,6 +212,18 @@ int getContentLengthAsNumber(char* data, int data_size)
 
 
 
+char* trsCSTRING_TO_SEQ(char* cString,uint size)
+{
+    char* ptr = malloc(size-1);
+    for(int i = 0; i<size-1;i++){
+        ptr[i] = cString[i];
+    }
+    return ptr;
+}
+
+
+
+
 // WARNING: NEEDS TO BE CHECKED                              returns the index at which the actual content starts at
 int calcOffsetIndex(char* data, int dSize)
 {
@@ -220,7 +232,16 @@ int calcOffsetIndex(char* data, int dSize)
     seq[1] = '\n';
     seq[2] = '\r';
     seq[3] = '\n';
-    int index = findSequenceInBinaryData(data, dSize,seq, 4,600);
+    
+    char* str = "Content-Type:";
+    char* seq_str = trsCSTRING_TO_SEQ(str, 14);  // pls free it later
+
+    int index = findSequenceInBinaryData(data, dSize, seq_str, 13, 0);
+    index = findSequenceInBinaryData(data, dSize, seq_str, 13, index);
+
+    index+=4;
+
+
     return index;
 }
 
@@ -266,6 +287,10 @@ char* transformToC_StringPath(char* fileName, int fSize, int* s)
 
 
 
+
+
+
+
 // WARNING: THIS FUNCTION IS STILL EXPERIMENTAL AND WILL NEED TO BE FIXED OVER THE NEXT SEVERA MONTH OR SO
 void postHandling(char* BUFFER, int BUFFER_SIZE)
 {
@@ -289,9 +314,10 @@ void postHandling(char* BUFFER, int BUFFER_SIZE)
 
         printf("Boom after Offset\n");
 
-        offset+=4; // is index where bin data starts at
+        
         char* shiftedBuffer = &BUFFER[offset];
         int elementNumber = offset+1;
+        int calcSize = BUFFER_SIZE-elementNumber;
 
         // trnsformation of fileName
         int s;
@@ -299,7 +325,7 @@ void postHandling(char* BUFFER, int BUFFER_SIZE)
 
 
         //let us try to write
-        writeBinaryToDisk(filePath,shiftedBuffer,elementNumber); // lets see if it blow up lol
+        writeBinaryToDisk(filePath,shiftedBuffer,BUFFER_SIZE); // lets see if it blow up lol
         free(fileName);
         free(filePath);
     }
