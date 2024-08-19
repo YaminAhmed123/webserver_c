@@ -35,6 +35,7 @@ void writeBinaryToDisk(char* fileName, char* DATA, uint DATA_SIZE)
 {
     FILE* file = fopen(fileName, "wb");
 
-    fwrite(DATA,sizeof(char), DATA_SIZE, file);
+    fwrite(DATA,1, DATA_SIZE, file);
+    fclose(file);     // Bro if u would no how much time i wasted cause i fogot to add that line WASTED_TIME = 7h
 }
 
