@@ -355,19 +355,6 @@ void* prepareBuffer(char* BUFF, uint BUFF_S, int* whereBIN_STARTS_AT, int* n_siz
     }
 
 
-    /*
-    // IMPLEMENT TEST
-    printf("-----------------------------WARNING_TEST---------------------------------\n");
-    for(int i = 0; i<new_buffer_size; i++){
-        printf("%c",WRITE[i]);
-    }
-    printf("\n");
-    printf("-----------------------------WARNING_TEST_END---------------------------------\n");
-
-    // END OF PLAY
-    */
-
-
     *n_size = new_buffer_size;
     return WRITE;
 }
