@@ -138,8 +138,32 @@ int main() {
             */
 
 
+            // TEST THE findBoundaryString function !!!
+            /*
+            int n;
+            char* ptr = findBoundaryString(buffer,BUFFER_SIZE,&n);
+            printf("DU HUAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+            
+            for(int i = 0; i<n; i++){
+                printf("%c",ptr[i]);
+            }
+            printf("\n");
+            free(ptr);
+            */
+
+
+            // TEST gen Start BD String here !!!
+            /*
+            printf("PRITNING GENRATED BD STRING GUYS :)\n");
+            int s;
+            char* ptr = genStartingBD_STRING(buffer,BUFFER_SIZE,&s);
+            pChars(ptr,s);
+            free(ptr);
+            */
+
+
             // IK brother its hard but pls try post handling here
-            postHandling(buffer,BUFFER_SIZE,&STATUS);
+            //postHandling(buffer,BUFFER_SIZE,&STATUS);
 
 
             //after all is load into memory

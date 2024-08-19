@@ -11,58 +11,88 @@
 
 
 
+char* trsCSTRING_TO_SEQ(char* cString,uint size)
+{
+    char* ptr = malloc(size-1);
+    for(int i = 0; i<size-1;i++){
+        ptr[i] = cString[i];
+    }
+
+    return ptr;
+}
+
+
+void pChars(char* seq, int seqS)
+{
+    printf("CAUTION PRINT SEQUENCE !!!\n");
+    for(int i = 0; i<seqS;i++){
+        printf("%c",seq[i]);
+    }
+    printf("\n");
+}
+
+
+
 // Note this function returns a char ptr of the boundary string length can be found using
 // Dont forget to free the memory after usage
 char* findBoundaryString(char* BINARY_DATA, uint DATA_SIZE, int* sizeForSequence)
 {
     char* b = "boundary=";
-    char boundary[strlen(b)];
+    char* b_seq = trsCSTRING_TO_SEQ(b, 10);
+    // pChars(b_seq, 9);
 
-    for(int i = 0; i< strlen(b); i++)
-    {
-        boundary[i] = b[i];
+    int offset = findSequenceInBinaryData(BINARY_DATA, DATA_SIZE, b_seq,9,0);
+    offset+=9;
+
+    char temp[200];
+    int SIZE = 0;
+    printf("PRINT THE BD STRING FROM BINARY_DATA\n");
+    while(BINARY_DATA[offset]!='\r'){
+        temp[SIZE] = BINARY_DATA[offset];
+        ++offset;
+        ++SIZE;
     }
+    temp[offset] = '\0';
 
+    char* RETURN_BD_STRING_BY_DEF = trsCSTRING_TO_SEQ(temp, SIZE+1);
+    *sizeForSequence = SIZE;
 
-    
-    // search binary for the sequence
-    int index = findSequenceInBinaryData(BINARY_DATA, DATA_SIZE,boundary, strlen(b),0);
-
-    if(index == -1){return NULL;}
-
-    index+=9;
-
-    char tempBuffer[1000];
-    memset(tempBuffer,0, sizeof(tempBuffer));
-    int i = 0;
-    while(BINARY_DATA[index] != '\r'){
-        tempBuffer[i] = BINARY_DATA[index];
-        ++index;
-        ++i;
-    }
-
-
-    char* boundaryString = malloc(sizeof(char)*strlen(tempBuffer));
-
-    for(int i = 0; i<strlen(tempBuffer);i++){
-        boundaryString[i] = tempBuffer[i];
-    }
-    *sizeForSequence = strlen(tempBuffer);
-    return boundaryString;
+    free(b_seq);
+    return RETURN_BD_STRING_BY_DEF;
 }
 
-int getIndexWhereBoundaryStringIs(char* DATA,uint DATA_SIZE)
+
+char* genStartingBD_STRING(char* BINARY_DATA, uint DATA_SIZE, int* seqSize)
+{
+    int s;
+    char* str = findBoundaryString(BINARY_DATA, DATA_SIZE, &s);
+
+    char* ptr = malloc(s+2);
+    ptr[0] = '-';
+    ptr[1] = '-';
+
+    int ss = 0;
+    for(int i = 2;i<s+2;i++){
+        ptr[i] = str[ss];
+        ++ss;
+    }
+
+    *seqSize = s+2;
+
+    free(str);
+    return ptr;
+}
+
+
+int getIndexWhereBoundaryStringStarts(char* DATA,uint DATA_SIZE)
 {
     int size;
-    char* ptr = findBoundaryString(DATA,DATA_SIZE,&size); // pls free later
+    char* ptr = genStartingBD_STRING(DATA, DATA_SIZE, &size); // pls free later
 
     int index = findSequenceInBinaryData(DATA, DATA_SIZE, ptr, size, 0);
-    index+=size;
-
-    int rl_index = findSequenceInBinaryData(DATA, DATA_SIZE, ptr, size, index);
 
     free(ptr);
-    return rl_index;
+    return index;
 }
 
 
@@ -167,7 +197,14 @@ char* findFileName(char* BINARY_DATA, uint DATA_SIZE, int* sizeForSequence)
 int searchForEndBoundaryString(char* buffer, int buffer_size)
 {
     int size;
-    char* ptr_bd_string = findBoundaryString(buffer, buffer_size,&size);
+    char* ptr_bd_string = genStartingBD_STRING(buffer, buffer_size,&size);
+
+    printf("PLEASE COMPARE THE NOW OUPTUTTED BD STRING WITH THE ONE IN UR BROWSER THX\n");
+
+    for(int i = 0; i<size; i++){
+        printf("%c",ptr_bd_string[i]);
+    }
+    printf("\n");
 
     char* ptrSend = malloc(size+2);
 
@@ -181,7 +218,7 @@ int searchForEndBoundaryString(char* buffer, int buffer_size)
     
 
     int res = findSequenceInBinaryData(buffer,buffer_size, ptrSend,size+2, 0);
-
+    printf("THIS IS ATEST FOR THE ENHD BOUNDARY STRING PLS COMPARE IT WITH UR BROWSERS\n");
     for(int i = 0; i<size+2; i++){
         printf("%c",ptrSend[i]);
     }
@@ -213,20 +250,7 @@ int getContentLengthAsNumber(char* data, int data_size)
 
 
 
-char* trsCSTRING_TO_SEQ(char* cString,uint size)
-{
-    char* ptr = malloc(size-1);
-    for(int i = 0; i<size-1;i++){
-        ptr[i] = cString[i];
-    }
 
-    for(int i = 0; i<size-1; i++)
-    {
-        printf("%c",ptr[i]);
-    }
-    printf("\n");
-    return ptr;
-}
 
 
 
@@ -319,9 +343,8 @@ void* prepareBuffer(char* BUFF, uint BUFF_S, int* whereBIN_STARTS_AT, int* n_siz
 
     int new_buffer_size = 0;
 
-    for(int i = *whereBIN_STARTS_AT; i<end; i++){
-        ++new_buffer_size;
-    }
+    //implement new size calculation
+    new_buffer_size = (end+1)-(*whereBIN_STARTS_AT+1);
 
     char* WRITE = malloc(new_buffer_size);
 
@@ -408,7 +431,7 @@ void h(char* buffer, int buffer_size, int bytesRead)
 
 
 
-
+/*
 
 // FUCK THIS SHIT THE FUCK U CANT WRITE SHIT TO DISK BUT U CAN WRITE IT TO DISK WITH OVERFLOW WHO THE FUCK GONNE DEBUG THAT ???
 // WARNING: THIS FUNCTION IS STILL EXPERIMENTAL AND WILL NEED TO BE FIXED OVER THE NEXT SEVERA MONTH OR SO
@@ -459,9 +482,11 @@ void postHandling(char* BUFFER, int BUFFER_SIZE, int* bytesRead)
         int s;
         char* filePath = transformToC_StringPath(fileName,fileNameSize,&s); // pls free later
 
+
+
         printf("%cAFTER SHIFT",shiftedBuffer[0]);
         //let us try to write
-        writeBinaryToDisk(filePath,shiftedBuffer,(uint)15);    // lets see if it blow up lol YES IT DOES LOL ._.
+        writeBinaryToDisk(filePath,n_buff,n_buff_size);    // lets see if it blow up lol YES IT DOES LOL ._.
 
 
         free(n_buff);
@@ -473,7 +498,7 @@ void postHandling(char* BUFFER, int BUFFER_SIZE, int* bytesRead)
     
 }
 
-
+*/
 
 
 
