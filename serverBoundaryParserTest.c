@@ -161,6 +161,13 @@ int main() {
             free(ptr);
             */
 
+            // TEST END BD STRING INDEX FUNCTION !!!!
+            int num = searchForEndBoundaryString(buffer,BUFFER_SIZE);
+            for(int i = num; i<STATUS; i++){
+                printf("%c",buffer[i]);
+            }
+            printf("\n");
+
 
             // IK brother its hard but pls try post handling here
             //postHandling(buffer,BUFFER_SIZE,&STATUS);

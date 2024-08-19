@@ -218,11 +218,13 @@ int searchForEndBoundaryString(char* buffer, int buffer_size)
     
 
     int res = findSequenceInBinaryData(buffer,buffer_size, ptrSend,size+2, 0);
+    /*
     printf("THIS IS ATEST FOR THE ENHD BOUNDARY STRING PLS COMPARE IT WITH UR BROWSERS\n");
     for(int i = 0; i<size+2; i++){
         printf("%c",ptrSend[i]);
     }
     printf("\n");
+    */
 
     free(ptrSend);
     if(res==-1){ return -1; }
@@ -336,10 +338,7 @@ char* transformToC_StringPath(char* fileName, int fSize, int* s)
 void* prepareBuffer(char* BUFF, uint BUFF_S, int* whereBIN_STARTS_AT, int* n_size)
 {
     int end = searchForEndBoundaryString(BUFF, BUFF_S);
-    end-=2;
-    printf("kakakakakakakakakkaakakakakakak\n");
-    printf("%d\n",end);
-    printf("%c\n",BUFF[end]);
+    
 
     int new_buffer_size = 0;
 
@@ -377,7 +376,7 @@ void* prepareBuffer(char* BUFF, uint BUFF_S, int* whereBIN_STARTS_AT, int* n_siz
 
 
 
-
+// BRO I HAVE NO IDEA WHY I WROTE THAT I SIMPLY JUST CANT REMEBER IT
 void h(char* buffer, int buffer_size, int bytesRead)
 {
     int index = calcOffsetIndex(buffer,buffer_size);
