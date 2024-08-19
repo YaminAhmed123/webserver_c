@@ -380,6 +380,7 @@ void BEST_CASE_MODE(char* BIN_BUFF,uint BIN_SIZE)
 
 
 // BRO I HAVE NO IDEA WHY I WROTE THAT I SIMPLY JUST CANT REMEBER IT
+// MAYBE REMOVE THAT FILE
 void h(char* buffer, int buffer_size, int bytesRead)
 {
     int index = calcOffsetIndex(buffer,buffer_size);
