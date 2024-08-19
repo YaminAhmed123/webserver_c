@@ -162,11 +162,17 @@ int main() {
             */
 
             // TEST END BD STRING INDEX FUNCTION !!!!
+            /*
             int num = searchForEndBoundaryString(buffer,BUFFER_SIZE);
             for(int i = num; i<STATUS; i++){
                 printf("%c",buffer[i]);
             }
             printf("\n");
+
+            */
+
+            // TEST THE BEST CASE MODE
+            BEST_CASE_MODE(buffer,BUFFER_SIZE);
 
 
             // IK brother its hard but pls try post handling here

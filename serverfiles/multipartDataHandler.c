@@ -373,7 +373,23 @@ void* prepareBuffer(char* BUFF, uint BUFF_S, int* whereBIN_STARTS_AT, int* n_siz
 }
 
 
+void BEST_CASE_MODE(char* BIN_BUFF,uint BIN_SIZE)
+{
+    int offset = calcOffsetIndex(BIN_BUFF, BIN_SIZE);
 
+    int seq_size;
+    char* fileName = findFileName(BIN_BUFF, BIN_SIZE, &seq_size);
+
+    // TRANSLATE FILENAME INTO C STRING BASED FILE_PATH
+    int size;
+    char* filePath = transformToC_StringPath(fileName, seq_size, &size);
+
+
+    int n;
+    char* n_buffer = (char*)prepareBuffer(BIN_BUFF, BIN_SIZE, &offset,&n);
+
+    writeBinaryToDisk(filePath,n_buffer,n-2);
+}
 
 
 // BRO I HAVE NO IDEA WHY I WROTE THAT I SIMPLY JUST CANT REMEBER IT
