@@ -6,6 +6,7 @@
 #include <time.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include "bufferSetUp.c"
 
 // This scetion will provide a set of tools thta can be used to handle multipart data handling
 
@@ -373,9 +374,10 @@ void BEST_CASE_MODE(char* BIN_BUFF,uint BIN_SIZE)
 
 
     int n;
-    char* n_buffer = (char*)prepareBuffer(BIN_BUFF, BIN_SIZE, &offset,&n);
+    char* n_buffer = (char*)prepareBuffer(BIN_BUFF, BIN_SIZE, &offset,&n); // free buffer later pls
 
     writeBinaryToDisk(filePath,n_buffer,n-2);
+    free(n_buffer);
 }
 
 
@@ -390,7 +392,41 @@ void h(char* buffer, int buffer_size, int bytesRead)
 }
 
 
+// Handler will come in future WARNING HANDLER BLOWS UP MEMORY ISSUES FIX LATER
+void WorstCase(char* DATA, uint DATA_SIZE, int bytesRead, int fd)
+{
+    int firstCall = 1;
+    int WHERE_BIN_STARTS = calcOffsetIndex(DATA,DATA_SIZE);
 
+    int fileNameSeqSize;
+    char* fileName = findFileName(DATA,DATA_SIZE, &fileNameSeqSize); // needs te be freed
+
+    int filePathSize;
+    char* filePath = transformToC_StringPath(fileName, fileNameSeqSize, &filePathSize);
+    free(fileName);
+
+    while(searchForEndBoundaryString(DATA, DATA_SIZE)==-1){
+        if(firstCall==1){
+            char* OFFSETTED_BUFFER = &DATA[WHERE_BIN_STARTS];
+            int s = WHERE_BIN_STARTS+1;
+            int size = bytesRead-s;
+
+            writeBinaryToDisk(filePath, OFFSETTED_BUFFER, size);
+        }
+
+        BUFFER_RELOAD(DATA,DATA_SIZE,fd,&bytesRead);
+        OffsetWriter(filePath,DATA,bytesRead,ReturnFileSize(filePath));
+    }
+
+    // Last write
+    int end = searchForEndBoundaryString(DATA, DATA_SIZE);
+    int size = 0;
+    for(int i = end; i<bytesRead;i++){
+        ++size;
+    }
+
+    OffsetWriter(filePath,DATA,bytesRead-size,ReturnFileSize(filePath));
+}
 
 
 
