@@ -1,6 +1,7 @@
 // this file defines a set of functions to search for a sequence of data in binary files
 #include <stdio.h> 
 #include <sys/types.h>
+#include <unistd.h>
 
 
 
@@ -39,3 +40,22 @@ void writeBinaryToDisk(char* fileName, char* DATA, uint DATA_SIZE)
     fclose(file);     // Bro if u would no how much time i wasted cause i fogot to add that line WASTED_TIME = 7h
 }
 
+
+
+void OffsetWriter(char* fileName,char* DATA,uint DATA_SIZE,int offset)
+{
+    FILE* file = fopen(fileName, "wb");
+    fseek(file,offset,SEEK_SET);
+
+    fwrite(DATA, 1, DATA_SIZE, file);
+    fclose(file);
+}
+
+long ReturnFileSize(char* filePath)
+{
+    FILE* file = fopen(filePath,"rb");
+    fseek(file,0,SEEK_END);
+    long size = ftell(file);
+    fclose(file);
+    return size;
+}

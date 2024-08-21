@@ -172,7 +172,12 @@ int main() {
             */
 
             // TEST THE BEST CASE MODE
-            BEST_CASE_MODE(buffer,BUFFER_SIZE);
+            if(searchForEndBoundaryString(buffer,BUFFER_SIZE)!=-1){
+                BEST_CASE_MODE(buffer,BUFFER_SIZE);
+            } else{
+                int r = STATUS;
+                WorstCase(buffer,BUFFER_SIZE,r,foo);
+            }
 
 
             // IK brother its hard but pls try post handling here
