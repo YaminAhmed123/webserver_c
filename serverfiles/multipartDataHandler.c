@@ -499,6 +499,7 @@ void WorstCaseM(char* DATA, uint DATA_SIZE, int bytesRead, int fd)
 
     // LAST WRITE
     OffsetWriter(filePath, DATA, BYTES_READ-bd_end_size, ReturnFileSize(filePath));
+    free(filePath);
 }
 
 
