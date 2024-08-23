@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -16,9 +15,7 @@
 
 
 int main() {
-    // prepare large data Buffer
-    char* LARGE_DATA_BUFFER = (char*)malloc(512 * 1024 * 1024);
-    int LARGE_DATA_BUFFER_SIZE = 512*1024*1024;
+
 
     //prepare static buffers for frontend
 
@@ -176,7 +173,7 @@ int main() {
                 BEST_CASE_MODE(buffer,BUFFER_SIZE);
             } else{
                 int r = STATUS;
-                WorstCase(buffer,BUFFER_SIZE,r,foo);
+                WorstCaseM(buffer,BUFFER_SIZE,STATUS,foo);  // Will cause a huge crash stack smashing !
             }
 
 
@@ -198,6 +195,5 @@ int main() {
     }
     
     close(foo);
-    free(LARGE_DATA_BUFFER);
     return 0;
 }
