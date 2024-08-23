@@ -1,4 +1,5 @@
 #include "binaryReaderWriter.c"
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -7,6 +8,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "bufferSetUp.c"
+
+#define END_OF_FILE 0
 
 // This scetion will provide a set of tools thta can be used to handle multipart data handling
 
@@ -200,7 +203,7 @@ int searchForEndBoundaryString(char* buffer, int buffer_size)
     int size;
     char* ptr_bd_string = genStartingBD_STRING(buffer, buffer_size,&size);
 
-    printf("PLEASE COMPARE THE NOW OUPTUTTED BD STRING WITH THE ONE IN UR BROWSER THX\n");
+    printf("BD STRING MODE SEARCH ACTIVE\n");
 
     for(int i = 0; i<size; i++){
         printf("%c",ptr_bd_string[i]);
@@ -228,6 +231,7 @@ int searchForEndBoundaryString(char* buffer, int buffer_size)
     */
 
     free(ptrSend);
+    printf("BD STRING MODE DISABLED\n");
     if(res==-1){ return -1; }
     if(res!=-1){return res;}
     return -1;
@@ -339,6 +343,9 @@ char* transformToC_StringPath(char* fileName, int fSize, int* s)
 void* prepareBuffer(char* BUFF, uint BUFF_S, int* whereBIN_STARTS_AT, int* n_size)
 {
     int end = searchForEndBoundaryString(BUFF, BUFF_S);
+    if(end == -1){
+        printf("FATAL ERROR AT FETCHING E BD STRING !!!!\n");
+    }
     
 
     int new_buffer_size = 0;
@@ -392,46 +399,108 @@ void h(char* buffer, int buffer_size, int bytesRead)
 }
 
 
+
+
+
+
+
+
+
+
+
+// FOR SOME REASON ENTERS A NEVER ENDING LOOP ERR NOT FIXED YET
+// WARNING SOME PARAMS ARE NOT NEEDED YET ADDED TO LATER ON ADD ERROR HANDLING
 // Handler will come in future WARNING HANDLER BLOWS UP MEMORY ISSUES FIX LATER
-void WorstCase(char* DATA, uint DATA_SIZE, int bytesRead, int fd)
+void WorstCase(char* DATA, uint DATA_SIZE, int bytesRead, int fd, char* EXTRACTED_DATA_BUFFER, uint EXTRACTED_DATA_BUFFER_SIZE)
 {
-    int firstCall = 1;
-    int WHERE_BIN_STARTS = calcOffsetIndex(DATA,DATA_SIZE);
+    int BYTES_READ = bytesRead;
+    u_int32_t LAST_WRITTEN_INDEX = 0;
 
-    int fileNameSeqSize;
-    char* fileName = findFileName(DATA,DATA_SIZE, &fileNameSeqSize); // needs te be freed
+    printf("HAS ENTERED\n");
 
-    int filePathSize;
-    char* filePath = transformToC_StringPath(fileName, fileNameSeqSize, &filePathSize);
-    free(fileName);
-
-    while(searchForEndBoundaryString(DATA, DATA_SIZE)==-1){
-        if(firstCall==1){
-            char* OFFSETTED_BUFFER = &DATA[WHERE_BIN_STARTS];
-            int s = WHERE_BIN_STARTS+1;
-            int size = bytesRead-s;
-
-            writeBinaryToDisk(filePath, OFFSETTED_BUFFER, size);
+    while(1){
+        printf("THE LAST WRITTEN INDEX IS:%d\n",LAST_WRITTEN_INDEX);
+        for(int i = 0; i < BYTES_READ; i++){
+            EXTRACTED_DATA_BUFFER[LAST_WRITTEN_INDEX] = DATA[i];
+            ++LAST_WRITTEN_INDEX;
         }
-
-        BUFFER_RELOAD(DATA,DATA_SIZE,fd,&bytesRead);
-        OffsetWriter(filePath,DATA,bytesRead,ReturnFileSize(filePath));
+        BUFFER_RELOAD(DATA,DATA_SIZE,fd,&BYTES_READ);
+        printf("%d\n",BYTES_READ);
+        printf("-\n");
+        if(searchForEndBoundaryString(EXTRACTED_DATA_BUFFER,EXTRACTED_DATA_BUFFER_SIZE)!=-1){
+            break;
+        }
     }
-
-    // Last write
-    int end = searchForEndBoundaryString(DATA, DATA_SIZE);
-    int size = 0;
-    for(int i = end; i<bytesRead;i++){
-        ++size;
-    }
-
-    OffsetWriter(filePath,DATA,bytesRead-size,ReturnFileSize(filePath));
+    printf("ENTERING BEST CASE SCENARIO\n");
+    BEST_CASE_MODE(EXTRACTED_DATA_BUFFER, EXTRACTED_DATA_BUFFER_SIZE);
 }
 
 
 
 
 
+// JUST A DUMMY REMOVE LATER ON
+void WorstCaseM(char* DATA, uint DATA_SIZE, int bytesRead, int fd)
+{
+    // Defines BD END
+    int BYTES_READ = bytesRead;
+    int bd_size;
+    char* bd = genStartingBD_STRING(DATA,DATA_SIZE,&bd_size);
+    char* bd_end = malloc(bd_size+2);     // WARNING PLS FREE AT END
+
+
+    for(int i = 0; i<bd_size;i++){
+        bd_end[i] = bd[i];
+    }
+
+
+    bd_end[bd_size] = '-';
+    bd_end[bd_size+1] = '-';
+    free(bd);
+    int bd_end_size = bd_size+4;
+    
+
+    // FETCH FILEPATH
+    int fileName_seq;
+    char* fileName = findFileName(DATA, DATA_SIZE, &fileName_seq);        // WARNING PLS FREE LATER !!!!
+
+    int s;
+    char* filePath = transformToC_StringPath(fileName,fileName_seq, &s);
+    free(fileName);
+
+
+    // TEST FINAL BD END STRING lol
+    printf("HELLO THIS IS A TEST TO SEE THE RES OF MY NEW FUNCTION PLS CHECK IT !!!!!!\n");
+    pChars(bd_end, bd_end_size);
+
+
+    
+    // FIRST WRITE
+    {
+        // Creates the file and writes the first chunk into it
+        int offset = calcOffsetIndex(DATA, DATA_SIZE);
+        int firstSize = bytesRead-(offset+1);
+        char* foo = &DATA[offset];
+        writeBinaryToDisk(filePath, foo, firstSize);
+    }
+
+    BUFFER_RELOAD(DATA, DATA_SIZE, fd, &BYTES_READ);
+
+    // MID WRITE
+    int limit = 0;
+    while(findSequenceInBinaryData(DATA, DATA_SIZE, bd_end, bd_end_size, 0)==-1){
+        OffsetWriter(filePath,DATA,BYTES_READ,ReturnFileSize(filePath));
+        BUFFER_RELOAD(DATA, DATA_SIZE, fd, &BYTES_READ);
+        ++limit;
+        if(limit == 1000000){
+            break;
+        }
+    }
+
+    // LAST WRITE
+    OffsetWriter(filePath, DATA, BYTES_READ-bd_end_size, ReturnFileSize(filePath));
+    free(filePath);
+}
 
 
 

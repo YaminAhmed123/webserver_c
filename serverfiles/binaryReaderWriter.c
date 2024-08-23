@@ -44,8 +44,11 @@ void writeBinaryToDisk(char* fileName, char* DATA, uint DATA_SIZE)
 
 void OffsetWriter(char* fileName,char* DATA,uint DATA_SIZE,int offset)
 {
-    FILE* file = fopen(fileName, "wb");
-    fseek(file,offset,SEEK_SET);
+    FILE* file = fopen(fileName, "r+b");
+
+    if(offset!=0){
+        fseek(file,offset,SEEK_SET);
+    }
 
     fwrite(DATA, 1, DATA_SIZE, file);
     fclose(file);
