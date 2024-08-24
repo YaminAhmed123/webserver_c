@@ -440,68 +440,47 @@ void WorstCase(char* DATA, uint DATA_SIZE, int bytesRead, int fd, char* EXTRACTE
 
 
 // JUST A DUMMY REMOVE LATER ON
-void WorstCaseM(char* DATA, uint DATA_SIZE, int bytesRead, int fd)
+void WorstCaseM(char* DATA, uint DATA_SIZE, int* bytesRead, int fd)
 {
     // Defines BD END
-    int BYTES_READ = bytesRead;
+    //int BYTES_READ = *bytesRead;
     int bd_size;
     char* bd = genStartingBD_STRING(DATA,DATA_SIZE,&bd_size);
     char* bd_end = malloc(bd_size+2);     // WARNING PLS FREE AT END
-
-
     for(int i = 0; i<bd_size;i++){
         bd_end[i] = bd[i];
     }
-
-
     bd_end[bd_size] = '-';
     bd_end[bd_size+1] = '-';
     free(bd);
     int bd_end_size = bd_size+4;
-    
-
     // FETCH FILEPATH
     int fileName_seq;
     char* fileName = findFileName(DATA, DATA_SIZE, &fileName_seq);        // WARNING PLS FREE LATER !!!!
-
     int s;
     char* filePath = transformToC_StringPath(fileName,fileName_seq, &s);
     free(fileName);
-
-
     // TEST FINAL BD END STRING lol
     printf("HELLO THIS IS A TEST TO SEE THE RES OF MY NEW FUNCTION PLS CHECK IT !!!!!!\n");
     pChars(bd_end, bd_end_size);
-
-
-    
     // FIRST WRITE
     {
         // Creates the file and writes the first chunk into it
         int offset = calcOffsetIndex(DATA, DATA_SIZE);
-        int firstSize = bytesRead-(offset+1);
+        int firstSize = *bytesRead-(offset+1);
         char* foo = &DATA[offset];
         writeBinaryToDisk(filePath, foo, firstSize);
     }
-
-    BUFFER_RELOAD(DATA, DATA_SIZE, fd, &BYTES_READ);
-
+    BUFFER_RELOAD(DATA, DATA_SIZE, fd, bytesRead);
     // MID WRITE
-    int limit = 0;
-    while(findSequenceInBinaryData(DATA, DATA_SIZE, bd_end, bd_end_size, 0)==-1){
-        OffsetWriter(filePath,DATA,BYTES_READ,ReturnFileSize(filePath));
-        BUFFER_RELOAD(DATA, DATA_SIZE, fd, &BYTES_READ);
-        ++limit;
-        if(limit == 1000000){
-            break;
-        }
-    }
+    
+
+    printf("Do we get here ?\n");
 
     // LAST WRITE
-    OffsetWriter(filePath, DATA, BYTES_READ-bd_end_size, ReturnFileSize(filePath));
+    //OffsetWriter(filePath, DATA, *bytesRead-bd_end_size, ReturnFileSize(filePath));
     free(filePath);
 }
-
 
 
 

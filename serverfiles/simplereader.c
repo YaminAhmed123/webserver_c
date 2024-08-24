@@ -11,7 +11,7 @@ void readFile(char* FILEPATH, char* BUFFER, int BUFFER_SIZE)
 
 
 // write file in binary mode
-void writeFile(char* DATA)
+void writeFile(char* DATA,int dSize)
 {
     
 }

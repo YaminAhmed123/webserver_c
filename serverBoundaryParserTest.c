@@ -11,7 +11,7 @@
 
 
 #define PORT 8080
-#define BUFFER_SIZE 20000
+#define BUFFER_SIZE 500000000
 
 
 int main() {
@@ -47,8 +47,8 @@ int main() {
     int server_socket;
     int foop = sizeof(struct sockaddr_in);
 
-    char buffer[BUFFER_SIZE];
-    memset(buffer,0,sizeof(buffer));
+    char* buffer = malloc(BUFFER_SIZE);
+    memset(buffer,0,BUFFER_SIZE);
     
     char* http_response = "HTTP/1.1 200 OK\r\n\r\n";
 
@@ -173,7 +173,7 @@ int main() {
                 BEST_CASE_MODE(buffer,BUFFER_SIZE);
             } else{
                 int r = STATUS;
-                WorstCaseM(buffer,BUFFER_SIZE,STATUS,foo);  // Will cause a huge crash stack smashing !
+                WorstCaseM(buffer,BUFFER_SIZE,&STATUS,foo);  // Will cause a huge crash stack smashing !
             }
 
 
@@ -190,7 +190,7 @@ int main() {
 
 
         close(foo);
-        memset(buffer,0,sizeof(buffer));
+        memset(buffer,0,BUFFER_SIZE);
 
     }
     
