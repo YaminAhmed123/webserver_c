@@ -1,10 +1,10 @@
-#############
-THE server EXECUTABLE SHOULD BE USED WITH A CLI 
-#############
+Mhm........
+I think i will take a deep breath.
+After that i will take along brake from that project and i will eventually return.
+But for now i have an unidentiable bug.
 
-Also it has no security at all use only in safe networks such as the
-local network where only you have acces
+I tried fixing it for like 5 Days straight each time 4-7h.
+I was not able to. the last tests that are doc are in the death branch.
 
-I am not an expert nor a professional in C if anything blows up u can not contact me.
-
-
+but for now.
+Good bye   .__.
