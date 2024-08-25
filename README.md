@@ -8,3 +8,6 @@ I was not able to. the last tests that are doc are in the death branch.
 
 but for now.
 Good bye   .__.
+
+
+In future read till data legnth. ik this is memory inefficient

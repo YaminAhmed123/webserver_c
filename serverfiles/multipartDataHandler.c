@@ -464,21 +464,29 @@ void WorstCaseM(char* DATA, uint DATA_SIZE, int* bytesRead, int fd)
     printf("HELLO THIS IS A TEST TO SEE THE RES OF MY NEW FUNCTION PLS CHECK IT !!!!!!\n");
     pChars(bd_end, bd_end_size);
     // FIRST WRITE
-    {
-        // Creates the file and writes the first chunk into it
-        int offset = calcOffsetIndex(DATA, DATA_SIZE);
-        int firstSize = *bytesRead-(offset+1);
-        char* foo = &DATA[offset];
-        writeBinaryToDisk(filePath, foo, firstSize);
-    }
+    
+    // Creates the file and writes the first chunk into it
+    int offset = calcOffsetIndex(DATA, DATA_SIZE);
+    int firstSize = *bytesRead-(offset+1);
+    char* foo = &DATA[offset];
+    writeBinaryToDisk(filePath, foo, firstSize);
+    
+    int call = 1;
     BUFFER_RELOAD(DATA, DATA_SIZE, fd, bytesRead);
     // MID WRITE
-    
+    while(findSequenceInBinaryData(DATA,DATA_SIZE,bd_end,bd_end_size,0)==-1){
+        printf("Call Number: %d\n",call);
+        ++call;
+        OffsetWriter(filePath,DATA,*bytesRead,ReturnFileSize(filePath));
+        BUFFER_RELOAD(DATA,DATA_SIZE,fd, bytesRead);
+    }
+
+
 
     printf("Do we get here ?\n");
 
     // LAST WRITE
-    //OffsetWriter(filePath, DATA, *bytesRead-bd_end_size, ReturnFileSize(filePath));
+    OffsetWriter(filePath, DATA, *bytesRead-bd_end_size, ReturnFileSize(filePath));
     free(filePath);
 }
 

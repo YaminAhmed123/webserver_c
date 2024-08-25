@@ -11,7 +11,7 @@
 
 
 #define PORT 8080
-#define BUFFER_SIZE 500000000
+#define BUFFER_SIZE 20000
 
 
 int main() {
@@ -47,7 +47,7 @@ int main() {
     int server_socket;
     int foop = sizeof(struct sockaddr_in);
 
-    char* buffer = malloc(BUFFER_SIZE);
+    char buffer[BUFFER_SIZE];
     memset(buffer,0,BUFFER_SIZE);
     
     char* http_response = "HTTP/1.1 200 OK\r\n\r\n";
@@ -87,10 +87,10 @@ int main() {
         
         // printf("%s",buffer);
 
-        if( CHECK_REQUEST(buffer)== 'H' ) { SEND_HTML(foo); }
-        if( CHECK_REQUEST(buffer)== 'C' ) { SEND_CSS(foo); }
-        if( CHECK_REQUEST(buffer)== 'J' ) { SEND_JS(foo); }
-        if( CHECK_REQUEST(buffer)== 'P' ) 
+        if( CHECK_REQUEST((char*)buffer)== 'H' ) { SEND_HTML(foo); }
+        if( CHECK_REQUEST((char*)buffer)== 'C' ) { SEND_CSS(foo); }
+        if( CHECK_REQUEST((char*)buffer)== 'J' ) { SEND_JS(foo); }
+        if( CHECK_REQUEST((char*)buffer)== 'P' ) 
         {
             // cannot do that as it includes bin data as well printf("%s\n",buffer);
 
@@ -169,11 +169,11 @@ int main() {
             */
 
             // TEST THE BEST CASE MODE
-            if(searchForEndBoundaryString(buffer,BUFFER_SIZE)!=-1){
-                BEST_CASE_MODE(buffer,BUFFER_SIZE);
+            if(searchForEndBoundaryString((char*)buffer,BUFFER_SIZE)!=-1){
+                BEST_CASE_MODE((char*)buffer,BUFFER_SIZE);
             } else{
                 int r = STATUS;
-                WorstCaseM(buffer,BUFFER_SIZE,&STATUS,foo);  // Will cause a huge crash stack smashing !
+                WorstCaseM((char*)buffer,BUFFER_SIZE,&STATUS,foo);  // Will cause a huge crash stack smashing !
             }
 
 
