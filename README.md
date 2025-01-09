@@ -1,4 +1,4 @@
-Not done yet i dont know when i will finally finish it. ig i am lazy
+Not done yet i dont know when i will finally finish it. 
 
 
 
