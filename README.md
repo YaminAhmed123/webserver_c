@@ -17,3 +17,5 @@ u can upload stuff to server and download it.
 not now but in future for sure
 
 note this http server was created for single traffic
+dead repo this code is literly ass.
+never seen some shit like this tf did i even build here.
