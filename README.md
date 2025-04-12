@@ -1,3 +1,6 @@
+yooo this shit codebase is just asss i mean what th
+
+
 Not done yet i dont know when i will finally finish it. 
 
 
